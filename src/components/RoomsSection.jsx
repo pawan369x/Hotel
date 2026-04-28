@@ -1,12 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { ArrowRight, CheckCircle2, X, Calendar, Users, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Zap } from 'lucide-react';
 import { useScroll, useTransform } from 'framer-motion';
+import ActionModal from './ActionModal';
 
 const rooms = [
   {
     id: 1,
-    title: "Premium Mountain Suite",
+    name: "Premium Mountain Suite",
     price: "4,500",
     image: "/premium_room.jpg",
     features: ["Balcony View", "King Bed", "Rain Shower", "Free Breakfast", "Mini Fridge"],
@@ -14,7 +15,7 @@ const rooms = [
   },
   {
     id: 2,
-    title: "Backpacker's Dormitory",
+    name: "Backpacker's Dormitory",
     price: "1,200",
     image: "/dormitory.jpg",
     features: ["Bunk Beds", "Fast Wi-Fi", "Shared Lounge", "Lockers", "Mountain View"],
@@ -22,7 +23,7 @@ const rooms = [
   },
   {
     id: 3,
-    title: "Himalayan Penthouse",
+    name: "Himalayan Penthouse",
     price: "6,500",
     image: "/deluxe_room.jpg",
     features: ["Panoramic View", "Private Terrace", "Mini Bar", "Bathtub", "Personal Butler"],
@@ -30,7 +31,7 @@ const rooms = [
   },
   {
     id: 4,
-    title: "Family Valley Suite",
+    name: "Family Valley Suite",
     price: "5,200",
     image: "/room4.jpeg",
     features: ["Two Bedrooms", "Living Area", "Kitchenette", "Board Games", "Extra Bed"],
@@ -41,18 +42,14 @@ const rooms = [
 const RoomsSection = () => {
   const targetRef = useRef(null);
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const { scrollYProgress } = useScroll({ target: targetRef });
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-65%"]);
 
-  // Booking Handler: Seedha WhatsApp par detail bhej dega (Easy & Working)
-  const handleBookingSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData);
-
-    const message = `Booking Inquiry for ${selectedRoom.title}%0A- Name: ${data.name}%0A- Guests: ${data.guests}%0A- Date: ${data.date}`;
-    window.open(`https://wa.me/919876543210?text=${message}`, '_blank');
-    setSelectedRoom(null);
+  const handleBookingClick = (room) => {
+    setSelectedRoom(room);
+    setIsModalOpen(true);
   };
 
   return (
@@ -83,7 +80,7 @@ const RoomsSection = () => {
                     <span className="px-3 py-1 rounded-full bg-pink-600 text-[10px] font-bold text-white uppercase tracking-widest">{room.tag}</span>
                     <span className="text-white/40 text-xs">Available Now</span>
                   </div>
-                  <h3 className="text-3xl lg:text-4xl font-normal text-white mb-4 leading-tight">{room.title}</h3>
+                  <h3 className="text-3xl lg:text-4xl font-normal text-white mb-4 leading-tight">{room.name}</h3>
                   <div className="grid grid-cols-2 gap-y-2 mb-8">
                     {room.features.map((f, i) => (
                       <div key={i} className="flex items-center gap-2 text-white/70 text-xs">
@@ -99,7 +96,7 @@ const RoomsSection = () => {
                     <p className="text-white/40 text-[10px] uppercase font-bold tracking-widest">Starting Price / Night</p>
                   </div>
                   <button
-                    onClick={() => setSelectedRoom(room)}
+                    onClick={() => handleBookingClick(room)}
                     className="bg-white hover:bg-pink-600 hover:text-white text-black px-8 py-4 rounded-2xl font-bold transition-all flex items-center gap-2 group/btn"
                   >
                     Book Now <Zap size={18} fill="currentColor" />
@@ -116,54 +113,13 @@ const RoomsSection = () => {
         </div>
       </div>
 
-      {/* --- BOOKING MODAL (ADVANCED UI) --- */}
-      <AnimatePresence>
-        {selectedRoom && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md"
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
-              className="bg-zinc-900 border border-white/10 w-full max-w-xl rounded-[2.5rem] overflow-hidden relative shadow-2xl"
-            >
-              <button onClick={() => setSelectedRoom(null)} className="absolute top-6 right-6 text-white/50 hover:text-white z-10"><X /></button>
-
-              <div className="h-48 relative">
-                <img src={selectedRoom.image} className="w-full h-full object-cover opacity-60" />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent" />
-                <h4 className="absolute bottom-6 left-8 text-2xl font-normal text-white">{selectedRoom.title}</h4>
-              </div>
-
-              <form onSubmit={handleBookingSubmit} className="p-8 space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-bold text-gray-400 ml-1">Your Full Name</label>
-                    <input name="name" required type="text" placeholder="John Doe" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-bold text-gray-400 ml-1">Arrival Date</label>
-                    <input name="date" required type="date" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-500" />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase font-bold text-gray-400 ml-1">Number of Guests</label>
-                  <select name="guests" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none">
-                    <option className="bg-zinc-900">1-2 Guests</option>
-                    <option className="bg-zinc-900">3-4 Guests</option>
-                    <option className="bg-zinc-900">More than 5</option>
-                  </select>
-                </div>
-
-                <button type="submit" className="w-full bg-pink-600 hover:bg-pink-500 text-white py-5 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-2 mt-4 shadow-xl shadow-pink-600/20">
-                  Confirm Booking Details <ArrowRight size={20} />
-                </button>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Unified Action Modal */}
+      <ActionModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        item={selectedRoom} 
+        type="book" 
+      />
     </section>
   );
 };

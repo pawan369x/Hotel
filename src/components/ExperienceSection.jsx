@@ -1,15 +1,24 @@
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
 import { MapPin, ArrowRight, Heart, MountainSnow, Star } from 'lucide-react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import ActionModal from './ActionModal';
 
 const ExperienceSection = () => {
     const sectionRef = useRef(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+
+    const handleBookingClick = (title) => {
+        setSelectedItem({ name: title, price: "Varies" });
+        setIsModalOpen(true);
+    };
 
     // Scroll-triggered animations
     const { scrollYProgress } = useScroll({
         target: sectionRef,
         offset: ["start end", "center center"]
     });
+// ... (rest of the logic remains same until return)
 
     const y = useTransform(scrollYProgress, [0, 1], [100, 0]);
     const opacity = useTransform(scrollYProgress, [0.3, 1], [0, 1]);
@@ -95,12 +104,20 @@ const ExperienceSection = () => {
                             whileInView="visible"
                             viewport={{ once: true, amount: 0.5 }}
                         >
-                            <motion.div variants={itemVariants} className="bg-slate-50 border border-slate-100 p-8 rounded-3xl hover:border-pink-300/50 transition-colors cursor-pointer space-y-3 group">
+                            <motion.div 
+                                onClick={() => handleBookingClick("Premium Suites")}
+                                variants={itemVariants} 
+                                className="bg-slate-50 border border-slate-100 p-8 rounded-3xl hover:border-pink-300/50 transition-colors cursor-pointer space-y-3 group"
+                            >
                                 <Heart className="text-pink-600 group-hover:scale-125 transition-transform" />
                                 <h3 className="text-xl font-bold">Premium Suites</h3>
                                 <p className="text-sm text-slate-500">Unmatched comfort in the hills.</p>
                             </motion.div>
-                            <motion.div variants={itemVariants} className="bg-pink-600/5 border border-pink-100 p-8 rounded-3xl hover:border-pink-300 transition-colors cursor-pointer space-y-3 group">
+                            <motion.div 
+                                onClick={() => handleBookingClick("Prime Location Tours")}
+                                variants={itemVariants} 
+                                className="bg-pink-600/5 border border-pink-100 p-8 rounded-3xl hover:border-pink-300 transition-colors cursor-pointer space-y-3 group"
+                            >
                                 <MapPin className="text-pink-600 group-hover:scale-125 transition-transform" />
                                 <h3 className="text-xl font-bold">Prime Location</h3>
                                 <p className="text-sm text-slate-500">Near Paragliding & Baijnath temple.</p>
@@ -113,7 +130,8 @@ const ExperienceSection = () => {
                         {/* THE INTERACTIVE IMAGE MASK */}
                         <motion.div
                             style={{ x: mainCardTrack, y: statCardTrack, rotateX: useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10])), rotateY: useSpring(useTransform(mouseX, [-0.5, 0.5], [10, -10])) }}
-                            className="relative aspect-square w-full max-w-[500px] shadow-2xl shadow-pink-100/30 overflow-hidden rounded-[2.5rem] p-3 bg-pink-600 group"
+                            onClick={() => handleBookingClick("Pink Park Experience")}
+                            className="relative aspect-square w-full max-w-[500px] shadow-2xl shadow-pink-100/30 overflow-hidden rounded-[2.5rem] p-3 bg-pink-600 group cursor-pointer"
                         >
                              <div className="absolute inset-2 bg-white rounded-[2rem] overflow-hidden">
                                 <img 
@@ -174,6 +192,13 @@ const ExperienceSection = () => {
                     </motion.a>
                 </motion.div>
             </motion.div>
+
+            <ActionModal 
+                isOpen={isModalOpen} 
+                onClose={() => setIsModalOpen(false)} 
+                item={selectedItem} 
+                type="book" 
+            />
         </section>
     );
 };
