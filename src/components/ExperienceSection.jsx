@@ -1,24 +1,22 @@
-import { motion, useScroll, useTransform, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import { MapPin, ArrowRight, Heart, MountainSnow, Star } from 'lucide-react';
-import { useRef, useState } from 'react';
-import ActionModal from './ActionModal';
+import { useRef } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { hotelsData } from '../data/hotels';
 
 const ExperienceSection = () => {
-    const sectionRef = useRef(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const { hotelId } = useParams();
+    const currentId = hotelId || "piink-park";
+    const hotel = hotelsData[currentId] || hotelsData["piink-park"];
+    const isPink = hotel.themeColor === 'pink';
 
-    const handleBookingClick = (title) => {
-        setSelectedItem({ name: title, price: "Varies" });
-        setIsModalOpen(true);
-    };
+    const sectionRef = useRef(null);
 
     // Scroll-triggered animations
     const { scrollYProgress } = useScroll({
         target: sectionRef,
         offset: ["start end", "center center"]
     });
-// ... (rest of the logic remains same until return)
 
     const y = useTransform(scrollYProgress, [0, 1], [100, 0]);
     const opacity = useTransform(scrollYProgress, [0.3, 1], [0, 1]);
@@ -28,6 +26,7 @@ const ExperienceSection = () => {
     const mouseY = useMotionValue(0);
 
     const handleMouseMove = (e) => {
+        if (!sectionRef.current) return;
         const { left, top, width, height } = sectionRef.current.getBoundingClientRect();
         const x = (e.clientX - left - width / 2) / width;
         const y = (e.clientY - top - height / 2) / height;
@@ -35,7 +34,7 @@ const ExperienceSection = () => {
         mouseY.set(y);
     };
 
-    // Card parallax offsets (higher number = more aggressive track)
+    // Card parallax offsets
     const springConfig = { damping: 25, stiffness: 150 };
     const textTrack = useSpring(useTransform(mouseX, [-0.5, 0.5], [10, -10]), springConfig);
     const mainCardTrack = useSpring(useTransform(mouseX, [-0.5, 0.5], [-15, 15]), springConfig);
@@ -55,18 +54,27 @@ const ExperienceSection = () => {
         visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
     };
 
+    // Dynamic Theme Styling
+    const textAccent = isPink ? 'text-pink-600' : 'text-amber-600';
+    const bgAccent = isPink ? 'bg-pink-600' : 'bg-amber-600';
+    const bgAccentHover = isPink ? 'hover:bg-pink-500' : 'hover:bg-amber-500';
+    const borderAccent = isPink ? 'hover:border-pink-300/50' : 'hover:border-amber-300/50';
+    const borderAccentStrong = isPink ? 'border-pink-100 hover:border-pink-300' : 'border-amber-100 hover:border-amber-300';
+    const bgAccentLight = isPink ? 'bg-pink-600/5' : 'bg-amber-600/5';
+    const fillStar = isPink ? 'text-pink-600' : 'text-amber-600';
+
     return (
         <section 
             ref={sectionRef}
             onMouseMove={handleMouseMove}
             className="relative bg-white pt-24 pb-32 overflow-hidden px-6 lg:px-12"
         >
-            {/* Background elements (subtle mountains, maybe?) */}
+            {/* Background elements */}
             <motion.h2 
-                className="absolute top-0 right-0 text-[30vw] font-normal text-slate-100 whitespace-nowrap pointer-events-none select-none z-0"
+                className="absolute top-0 right-0 text-[30vw] font-black text-slate-100 whitespace-nowrap pointer-events-none select-none z-0"
                 style={{ y: useTransform(scrollYProgress, [0, 1], [-100, 100]) }}
             >
-                BIR BILLING
+                {currentId === "piink-park" ? "BIR BILLING" : "GUNEHAR"}
             </motion.h2>
 
             <motion.div
@@ -85,14 +93,17 @@ const ExperienceSection = () => {
                             viewport={{ once: true, amount: 0.2 }}
                             className="space-y-6"
                         >
-                            <motion.span variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="text-sm font-bold tracking-[0.3em] text-pink-600 uppercase">
+                            <motion.span variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className={`text-sm font-serif font-bold tracking-[0.3em] ${textAccent} uppercase`}>
                                 The Experience
                             </motion.span>
-                            <motion.h2 variants={{ hidden: { opacity: 0, x: -50 }, visible: { opacity: 1, x: 0 } }} className="text-5xl lg:text-6xl font-serif font-normal tracking-tighter text-slate-900 leading-[1.1]">
-                                A <span className="text-pink-600 italic">Symphony</span> of <motion.span style={{x: textTrack}} className="inline-block">Luxury</motion.span> & Nature.
+                            <motion.h2 variants={{ hidden: { opacity: 0, x: -50 }, visible: { opacity: 1, x: 0 } }} className="text-5xl lg:text-6xl font-serif font-black tracking-tighter text-slate-900 leading-[1.1]">
+                                A <span className={`${textAccent} italic`}>Symphony</span> of <motion.span style={{x: textTrack}} className="inline-block">Luxury</motion.span> & Nature.
                             </motion.h2>
                             <motion.p variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="text-lg text-slate-600 leading-relaxed font-light">
-                                Nestled in Kotli, Bir, Hotel Pink Park offers an unparalleled 3-star retreat, perfectly blending modern elegance and Himachali warmth.
+                                {currentId === "piink-park"
+                                  ? "Nestled in Kotli, Bir, Hotel Piink Park offers an unparalleled 3-star retreat, perfectly blending modern elegance and Himachali warmth."
+                                  : "Located in the quiet village of Gunehar, Bir, Indra Home Stay offers a tranquil slice of local village life, blending cozy traditional cottages and warm pahadi hospitality."
+                                }
                             </motion.p>
                         </motion.div>
 
@@ -104,43 +115,44 @@ const ExperienceSection = () => {
                             whileInView="visible"
                             viewport={{ once: true, amount: 0.5 }}
                         >
-                            <motion.div 
-                                onClick={() => handleBookingClick("Premium Suites")}
-                                variants={itemVariants} 
-                                className="bg-slate-50 border border-slate-100 p-8 rounded-3xl hover:border-pink-300/50 transition-colors cursor-pointer space-y-3 group"
-                            >
-                                <Heart className="text-pink-600 group-hover:scale-125 transition-transform" />
-                                <h3 className="text-xl font-bold">Premium Suites</h3>
-                                <p className="text-sm text-slate-500">Unmatched comfort in the hills.</p>
+                            <motion.div variants={itemVariants} className={`bg-slate-50 border border-slate-100 p-8 rounded-3xl transition-colors cursor-pointer space-y-3 group ${borderAccent}`}>
+                                <Heart className={`${textAccent} group-hover:scale-125 transition-transform`} />
+                                <h3 className="text-xl font-bold">
+                                  {currentId === "piink-park" ? "Premium Suites" : "Cozy Attics"}
+                                </h3>
+                                <p className="text-sm text-slate-500">
+                                  {currentId === "piink-park" ? "Unmatched comfort in the hills." : "Traditional mud & timber comfort."}
+                                </p>
                             </motion.div>
-                            <motion.div 
-                                onClick={() => handleBookingClick("Prime Location Tours")}
-                                variants={itemVariants} 
-                                className="bg-pink-600/5 border border-pink-100 p-8 rounded-3xl hover:border-pink-300 transition-colors cursor-pointer space-y-3 group"
-                            >
-                                <MapPin className="text-pink-600 group-hover:scale-125 transition-transform" />
-                                <h3 className="text-xl font-bold">Prime Location</h3>
-                                <p className="text-sm text-slate-500">Near Paragliding & Baijnath temple.</p>
+                            
+                            <motion.div variants={itemVariants} className={`border p-8 rounded-3xl transition-colors cursor-pointer space-y-3 group ${bgAccentLight} ${borderAccentStrong}`}>
+                                <MapPin className={`${textAccent} group-hover:scale-125 transition-transform`} />
+                                <h3 className="text-xl font-bold">
+                                  {currentId === "piink-park" ? "Prime Location" : "Peaceful Oasis"}
+                                </h3>
+                                <p className="text-sm text-slate-500">
+                                  {currentId === "piink-park" 
+                                    ? "Near Paragliding landing site." 
+                                    : "Near waterfalls & tea gardens."}
+                                </p>
                             </motion.div>
                         </motion.div>
                     </div>
 
                     {/* RIGHT SIDE: Interactive Image & Dynamic Stats */}
                     <div className="lg:col-span-6 mt-16 lg:mt-0 relative flex justify-center lg:justify-end">
-                        {/* THE INTERACTIVE IMAGE MASK */}
                         <motion.div
                             style={{ x: mainCardTrack, y: statCardTrack, rotateX: useSpring(useTransform(mouseY, [-0.5, 0.5], [10, -10])), rotateY: useSpring(useTransform(mouseX, [-0.5, 0.5], [10, -10])) }}
-                            onClick={() => handleBookingClick("Pink Park Experience")}
-                            className="relative aspect-square w-full max-w-[500px] shadow-2xl shadow-pink-100/30 overflow-hidden rounded-[2.5rem] p-3 bg-pink-600 group cursor-pointer"
+                            className={`relative aspect-square w-full max-w-[500px] shadow-2xl shadow-slate-100 overflow-hidden rounded-[2.5rem] p-3 ${bgAccent} group`}
                         >
                              <div className="absolute inset-2 bg-white rounded-[2rem] overflow-hidden">
                                 <img 
-                                    src="/banner-1.png" 
-                                    alt="Pink Park Hotel Bir" 
+                                    src={currentId === "piink-park" ? "/banner-1.png" : "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80"} 
+                                    alt={hotel.name} 
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/60 transition-opacity opacity-0 group-hover:opacity-100 flex items-end p-8">
-                                    <p className="text-white text-lg font-bold">Your Himalayan Retreat, Waiting.</p>
+                                    <p className="text-white text-lg font-bold">Your Himalayan Sanctuary, Waiting.</p>
                                 </div>
                              </div>
                         </motion.div>
@@ -150,12 +162,12 @@ const ExperienceSection = () => {
                             style={{ x: -statCardTrack, y: -textTrack }}
                             className="absolute -top-12 -left-12 bg-white/5 backdrop-blur-3xl border border-white/10 p-6 rounded-2xl shadow-xl flex items-center gap-4 group cursor-pointer hover:border-white/30 transition-colors"
                         >
-                             <div className="w-12 h-12 bg-pink-600 flex items-center justify-center rounded-xl text-white group-hover:scale-110 transition-transform">
+                             <div className={`w-12 h-12 ${bgAccent} flex items-center justify-center rounded-xl text-white group-hover:scale-110 transition-transform`}>
                                 <MountainSnow />
                              </div>
                              <div>
-                                <span className="text-xs text-slate-400 font-bold uppercase mb-1">Elevation</span>
-                                <p className="text-2xl font-normal text-slate-900 tracking-tighter">1,500m <span className="text-xs text-slate-400">AMS</span></p>
+                                <span className="text-xs text-slate-400 font-serif font-bold uppercase mb-1">Elevation</span>
+                                <p className="text-2xl font-black text-slate-900 tracking-tighter">{hotel.elevation} <span className="text-xs text-slate-400 font-serif">AMS</span></p>
                              </div>
                         </motion.div>
 
@@ -164,7 +176,7 @@ const ExperienceSection = () => {
                             style={{ x: statCardTrack, y: textTrack }}
                             className="absolute bottom-12 -right-12 bg-slate-900 text-white p-6 rounded-2xl shadow-2xl shadow-slate-900/40 text-center"
                         >
-                            <p className="text-xs text-slate-300 mb-2 font-bold uppercase tracking-wider">Top Rated in Bir</p>
+                            <p className="text-xs text-slate-300 mb-2 font-serif font-bold uppercase tracking-wider">Top Rated in Bir</p>
                             <div className="flex gap-1 justify-center mb-1">
                                 {[...Array(5)].map((_, i) => <Star key={i} size={18} fill="currentColor" className="text-yellow-400"/>)}
                             </div>
@@ -182,23 +194,43 @@ const ExperienceSection = () => {
                     viewport={{ once: true, amount: 0.2 }}
                     className="mt-20 flex justify-center"
                 >
-                    <motion.a 
+                  <Link to={`/${currentId}/about`}>
+                    <motion.span 
                         variants={itemVariants}
-                        href="#" 
                         whileHover={{ x: -10 }}
-                        className="flex items-center gap-3 text-lg font-bold text-pink-600 hover:text-slate-900 group"
+                        className={`flex items-center gap-3 text-lg font-bold ${textAccent} hover:text-slate-900 group cursor-pointer`}
                     >
                          <div className="h-[2px] w-0 bg-slate-900 group-hover:w-8 transition-all duration-300"/>Discover Our Story <ArrowRight />
-                    </motion.a>
-                </motion.div>
-            </motion.div>
+                    </motion.span>
+                  </Link>
+              </motion.div>
 
-            <ActionModal 
-                isOpen={isModalOpen} 
-                onClose={() => setIsModalOpen(false)} 
-                item={selectedItem} 
-                type="book" 
-            />
+              {/* Quick Amenities Row */}
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="mt-32 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 border-t border-slate-100 pt-20"
+              >
+                {[
+                  { label: "Free WiFi", icon: "📶", detail: "High speed connectivity" },
+                  { label: "24/7 Power", icon: "⚡", detail: "Backup available" },
+                  { label: "Pure Veg", icon: "🥗", detail: "Organic kitchen" },
+                  { label: "Parking", icon: "🚗", detail: "Secure on-site" },
+                  { label: "Tea/Coffee", icon: "☕", detail: "In-room service" },
+                  { label: "Trekking", icon: "🥾", detail: "Guided tours" },
+                ].map((item, idx) => (
+                  <div key={idx} className="group text-center space-y-4">
+                    <div className={`w-16 h-16 mx-auto bg-slate-50 rounded-full flex items-center justify-center text-2xl group-hover:${bgAccent} group-hover:text-white transition-all duration-500 shadow-sm`}>
+                      {item.icon}
+                    </div>
+                    <div>
+                      <h5 className="font-bold text-slate-900">{item.label}</h5>
+                      <p className="text-[10px] text-slate-400 uppercase tracking-widest font-serif font-bold">{item.detail}</p>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            </motion.div>
         </section>
     );
 };

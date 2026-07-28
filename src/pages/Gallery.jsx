@@ -1,25 +1,17 @@
-import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
+import { useParams } from 'react-router-dom';
+import { hotelsData } from '../data/hotels';
 
 const Gallery = () => {
-  const images = [
-    '/exterior.jpg',
-    '/premium_room.jpg',
-    '/banner-1.png',
-    '/restaurant.jpg',
-    '/dormitory.jpg',
-    '/banner-2.png',
-    '/deluxe_room.jpg',
-    '/room4.jpeg',
-    '/banner-3.png'
-  ];
+  const { hotelId } = useParams();
+  const currentId = hotelId || "piink-park";
+  const hotel = hotelsData[currentId] || hotelsData["piink-park"];
+  const isPink = hotel.themeColor === 'pink';
+
+  const images = hotel.gallery;
 
   return (
     <div className="pt-24 pb-16 bg-slate-50 min-h-screen">
-      <Helmet>
-        <title>Gallery | Pink Park Hotel Bir Billing</title>
-        <meta name="description" content="Take a visual journey through Pink Park Hotel and the stunning surroundings of Bir Billing, Himachal Pradesh." />
-      </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -27,7 +19,9 @@ const Gallery = () => {
           className="text-center py-16"
         >
           <h1 className="text-5xl font-serif text-slate-900 mb-4">Gallery</h1>
-          <p className="text-slate-600 max-w-2xl mx-auto">A visual journey through Pink Park and the stunning surroundings of Bir Billing.</p>
+          <p className="text-slate-600 max-w-2xl mx-auto">
+            A visual journey through {hotel.name} and the stunning surroundings of Bir Billing.
+          </p>
         </motion.div>
 
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
