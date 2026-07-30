@@ -26,8 +26,8 @@ const Twitter = ({ size = 24, className = "" }) => (
 
 const Footer = () => {
   const { hotelId } = useParams();
-  const currentId = hotelId || "piink-park";
-  const hotel = hotelsData[currentId] || hotelsData["piink-park"];
+  const currentId = hotelId || "pink-park";
+  const hotel = hotelsData[currentId] || hotelsData["pink-park"];
 
   // Dynamic Theme Styling
   const isPink = hotel.themeColor === 'pink';
@@ -107,7 +107,7 @@ const Footer = () => {
               {[...Array(5)].map((_, i) => <Star key={i} size={20} fill="currentColor" />)}
             </div>
             <p className="text-xl md:text-2xl font-serif italic">
-              {currentId === "piink-park" ? '"The most aesthetic stay in Bir Billing!"' : '"The most peaceful homestay experience!"'}
+              {currentId === "pink-park" ? '"The most aesthetic stay in Bir Billing!"' : '"The most peaceful homestay experience!"'}
             </p>
             <span className="text-xs font-medium opacity-80">— Guest Reviews</span>
           </div>
@@ -202,7 +202,7 @@ const Footer = () => {
               <Globe className={textAccentHeavy} size={24} />
               <p className="text-[10px] text-gray-500 font-bold uppercase mb-2 mt-2">Sustainable Tourism</p>
               <p className="text-sm italic text-gray-300">
-                {currentId === "piink-park" 
+                {currentId === "pink-park" 
                   ? '"We proudly support the local Bir community and eco-friendly travel."'
                   : '"Supporting local Gunehar farmers and serving organic farm-to-table food."'}
               </p>

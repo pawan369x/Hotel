@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight, Compass, Home as HomeIcon } from 'lucide-react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { ArrowRight, Compass } from 'lucide-react';
 import Logo from '../components/Logo';
 
 // Custom 4-Point Gold Star Sparkle Component
@@ -21,30 +21,79 @@ const GoldSparkle = ({ className = "", style = {} }) => (
 );
 
 const FranchiseHome = () => {
+  const [hoveredSide, setHoveredSide] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [cursorText, setCursorText] = useState("");
+  const [cursorVariant, setCursorVariant] = useState("default");
+  const [cursorVisible, setCursorVisible] = useState(false);
+
+  // Mouse coordinates for smooth lag custom cursor
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
+  
+  const springConfig = { damping: 35, stiffness: 350, mass: 0.5 };
+  const cursorXSpring = useSpring(cursorX, springConfig);
+  const cursorYSpring = useSpring(cursorY, springConfig);
+
+  // Handle responsiveness and mouse tracking
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    const moveCursor = (e) => {
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
+    };
+
+    const handleMouseEnter = () => setCursorVisible(true);
+    const handleMouseLeave = () => setCursorVisible(false);
+
+    window.addEventListener('mousemove', moveCursor);
+    document.addEventListener('mouseenter', handleMouseEnter);
+    document.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', moveCursor);
+      document.removeEventListener('mouseenter', handleMouseEnter);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [cursorX, cursorY]);
+
   // Sparkle floating animations config
   const sparkles = [
-    { delay: 0.2, top: "15%", left: "10%", size: "w-4 h-4 opacity-40 animate-pulse" },
-    { delay: 1.5, top: "25%", right: "15%", size: "w-6 h-6 opacity-60 animate-bounce" },
+    { delay: 0.2, top: "15%", left: "10%", size: "w-4 h-4 opacity-40" },
+    { delay: 1.5, top: "25%", right: "15%", size: "w-6 h-6 opacity-60" },
     { delay: 0.8, bottom: "20%", left: "8%", size: "w-5 h-5 opacity-50" },
-    { delay: 2.1, bottom: "15%", right: "12%", size: "w-8 h-8 opacity-70 animate-pulse" },
-    { delay: 0.5, top: "45%", left: "45%", size: "w-3 h-3 opacity-30 animate-ping" }
+    { delay: 2.1, bottom: "15%", right: "12%", size: "w-8 h-8 opacity-70" },
+    { delay: 0.5, top: "45%", left: "45%", size: "w-3 h-3 opacity-30" }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#372714] via-[#1a1107] to-[#0a0704] text-white flex flex-col justify-between overflow-hidden relative font-sans">
+    <div className="h-screen w-screen bg-[#080605] text-white flex flex-col lg:flex-row overflow-hidden relative font-sans select-none animate-fadeIn">
       
-      {/* Background vignette & ambient lights */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(197,168,128,0.12)_0%,transparent_75%)] pointer-events-none" />
-      <div className="absolute top-0 left-0 w-full h-full bg-[black]/20 pointer-events-none" />
-      
-      {/* Dynamic Sparkles Floating in Background */}
+      {/* Ambient glowing radial lights that drift in background */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(197,168,128,0.08)_0%,transparent_60%)] pointer-events-none z-10" />
+      <div className="absolute inset-0 bg-black/10 pointer-events-none z-10" />
+
+      {/* Floating Sparkles with slow drift */}
       {sparkles.map((sp, idx) => (
         <motion.div
           key={idx}
           initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: [0.2, 0.8, 0.2], scale: [0.8, 1.2, 0.8], y: [0, -10, 0] }}
-          transition={{ duration: 5 + idx, repeat: Infinity, delay: sp.delay, ease: "easeInOut" }}
-          className="absolute pointer-events-none z-0"
+          animate={{ 
+            opacity: [0.15, 0.6, 0.15], 
+            scale: [0.8, 1.2, 0.8], 
+            y: [0, -15, 0] 
+          }}
+          transition={{ 
+            duration: 6 + idx, 
+            repeat: Infinity, 
+            delay: sp.delay, 
+            ease: "easeInOut" 
+          }}
+          className="absolute pointer-events-none z-10"
           style={{ 
             top: sp.top, 
             left: sp.left, 
@@ -56,135 +105,264 @@ const FranchiseHome = () => {
         </motion.div>
       ))}
 
-      {/* Header / Brand Logo */}
-      <header className="pt-16 pb-6 text-center relative z-20">
+      {/* Luxury Trailing Custom Cursor (Desktop Only) */}
+      <motion.div
+        className="hidden lg:block fixed top-0 left-0 rounded-full border pointer-events-none z-[100] -translate-x-1/2 -translate-y-1/2"
+        style={{
+          x: cursorXSpring,
+          y: cursorYSpring,
+          opacity: cursorVisible ? 1 : 0,
+        }}
+        animate={{
+          width: cursorVariant === "hover" ? 100 : 36,
+          height: cursorVariant === "hover" ? 100 : 36,
+          backgroundColor: cursorVariant === "hover" ? "rgba(197, 168, 128, 0.08)" : "rgba(255, 255, 255, 0.03)",
+          borderColor: cursorVariant === "hover" ? "#C5A880" : "rgba(197, 168, 128, 0.4)",
+          boxShadow: cursorVariant === "hover" ? "0 0 20px rgba(197,168,128,0.15)" : "none"
+        }}
+        transition={{ type: "spring", stiffness: 350, damping: 25 }}
+      >
+        {cursorText && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="absolute inset-0 flex items-center justify-center text-[10px] font-sans font-bold tracking-[0.25em] text-[#C5A880] uppercase"
+          >
+            {cursorText}
+          </motion.div>
+        )}
+      </motion.div>
+
+      {/* Floating Header Branding */}
+      <header className="absolute top-8 md:top-12 left-0 right-0 z-30 text-center pointer-events-none">
         <motion.div
-          initial={{ opacity: 0, y: -30 }}
+          initial={{ opacity: 0, y: -25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
-          className="flex flex-col items-center"
+          className="flex flex-col items-center justify-center"
         >
-          {/* Main Franchise logo with soft glowing shadow */}
-          <div className="relative p-4 rounded-full bg-black/10 backdrop-blur-sm border border-white/5 shadow-2xl shadow-amber-900/10">
-            <div className="absolute -inset-4 bg-amber-500/5 rounded-full blur-xl opacity-50" />
-            <Logo className="h-32 md:h-36 relative z-10" variant="full" color="gold" />
+          <div className="flex flex-col items-center pointer-events-auto">
+            {/* Elegant Small Crest Logo */}
+            <Logo className="h-14 md:h-18" variant="crest" color="gold" />
+            <h1 className="text-white text-sm md:text-base font-serif font-medium tracking-[0.6em] uppercase mt-4 leading-none">
+              Panache Hotels
+            </h1>
+            <span className="text-[8px] tracking-[0.5em] text-[#C5A880] uppercase font-bold block mt-2.5">
+              Luxury Franchise
+            </span>
           </div>
         </motion.div>
       </header>
 
-      {/* Main Choice Section */}
-      <main className="flex-grow flex flex-col lg:flex-row items-center justify-center max-w-7xl mx-auto w-full px-6 gap-10 py-10 relative z-10">
+      {/* Split Panels Wrapper */}
+      <div className="flex-grow flex flex-col lg:flex-row w-full h-full relative z-20">
         
-        {/* PIINK PARK CARD */}
+        {/* PANEL 1: PINK PARK (LEFT) */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-          className="w-full lg:w-1/2 h-[55vh] lg:h-[65vh] group relative rounded-[3rem] overflow-hidden border border-white/10 bg-[#16130f]/60 shadow-[0_30px_100px_rgba(0,0,0,0.8)] hover:border-pink-500/40 transition-all duration-700 backdrop-blur-md"
+          onMouseEnter={() => {
+            if (!isMobile) {
+              setHoveredSide('left');
+              setCursorVariant('hover');
+              setCursorText('Explore');
+            }
+          }}
+          onMouseLeave={() => {
+            if (!isMobile) {
+              setHoveredSide(null);
+              setCursorVariant('default');
+              setCursorText('');
+            }
+          }}
+          animate={{
+            width: isMobile ? "100%" : hoveredSide === 'left' ? '60%' : hoveredSide === 'right' ? '40%' : '50%',
+            height: isMobile ? "50vh" : "100%"
+          }}
+          transition={{ type: "spring", stiffness: 180, damping: 24, mass: 0.8 }}
+          className="relative overflow-hidden group border-b lg:border-b-0 lg:border-r border-white/5 cursor-none"
         >
-          {/* Background Image with elegant cover zoom */}
-          <div className="absolute inset-0 z-0 overflow-hidden">
-            <img 
-              src="/banner-1.png" 
-              alt="Piink Park" 
-              className="w-full h-full object-cover opacity-40 group-hover:opacity-75 group-hover:scale-110 transition-all duration-[1.5s]"
-            />
-            {/* Rich gradient overlay for max contrast & readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0704] via-[#0a0704]/70 to-[#0a0704]/20" />
-          </div>
+          {/* Background Image with Cinematic Transitions & Ken Burns Effect */}
+          <motion.img 
+            src="/banner-1.png" 
+            alt="Pink Park" 
+            animate={{
+              scale: hoveredSide === 'left' ? 1.08 : 1.02,
+              filter: hoveredSide === 'left' 
+                ? 'brightness(0.6) saturate(1.1)' 
+                : hoveredSide === 'right'
+                ? 'brightness(0.18) saturate(0.1) blur(3px)'
+                : 'brightness(0.38) saturate(0.65) sepia(0.15)'
+            }}
+            transition={{ duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
+            className="w-full h-full object-cover absolute inset-0 z-0 origin-center pointer-events-none"
+          />
+          {/* Premium Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10 z-10 pointer-events-none" />
 
-          {/* Card Content */}
-          <div className="absolute inset-0 z-10 p-10 md:p-14 flex flex-col justify-between h-full">
-            <div className="flex justify-between items-start">
-              <span className="bg-pink-600/20 text-pink-400 border border-pink-500/30 px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em]">
+          {/* Panel Card Content */}
+          <div className="absolute inset-0 z-20 p-8 md:p-14 lg:p-20 flex flex-col justify-end lg:justify-between h-full">
+            {/* Top Row: Tagline and Big Number */}
+            <div className="hidden lg:flex justify-between items-start w-full">
+              <span className="border border-pink-500/30 bg-pink-500/10 text-pink-300 px-5 py-2 rounded-full text-[9px] font-bold uppercase tracking-[0.25em] backdrop-blur-md">
                 Active & Luxury
               </span>
-              <span className="text-white/10 font-serif text-6xl font-black group-hover:text-pink-500/20 transition-all leading-none">01</span>
+              <motion.span 
+                animate={{ opacity: hoveredSide === 'left' ? 0.15 : hoveredSide === 'right' ? 0.02 : 0.08 }}
+                className="text-white font-serif text-8xl md:text-[10rem] font-bold tracking-tighter leading-none select-none"
+              >
+                01
+              </motion.span>
             </div>
 
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <span className="text-[10px] uppercase font-bold tracking-[0.3em] text-pink-400 block font-serif">Tehsil-Baijnath, Bir</span>
-                {/* Explicitly colored text-white h2 to override global stylesheet */}
-                <h2 className="text-white text-4xl md:text-5xl font-serif font-bold tracking-tight group-hover:text-pink-200 transition-colors drop-shadow-md">
-                  Piink Park
+            {/* Bottom Content Area */}
+            <motion.div 
+              animate={{
+                y: hoveredSide === 'left' ? 0 : hoveredSide === 'right' ? 15 : 0,
+                opacity: hoveredSide === 'left' ? 1 : hoveredSide === 'right' ? 0.35 : 0.8
+              }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="space-y-4 md:space-y-6"
+            >
+              <div className="space-y-2 md:space-y-3">
+                {/* Mobile Tagline (when hidden in top row) */}
+                <span className="lg:hidden inline-block border border-pink-500/30 bg-pink-500/5 text-pink-300 px-4 py-1.5 rounded-full text-[8px] font-bold uppercase tracking-[0.2em] mb-2">
+                  Active & Luxury
+                </span>
+                <span className="text-[10px] uppercase font-bold tracking-[0.3em] text-[#C5A880] block font-serif">
+                  Tehsil-Baijnath, Bir
+                </span>
+                <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-serif font-semibold tracking-wide drop-shadow-md">
+                  Pink Park
                 </h2>
-                <p className="text-zinc-300 text-sm md:text-base font-light leading-relaxed max-w-md drop-shadow">
+                <p className="text-zinc-300/90 text-xs md:text-sm lg:text-base font-light leading-relaxed max-w-md drop-shadow">
                   Experience a premium 3-star luxury retreat nestled in the heart of paragliding capital, featuring panoramic mountain-view suites and gourmet Himachali dining.
                 </p>
               </div>
 
-              <Link 
-                to="/piink-park"
-                className="inline-flex items-center gap-3 bg-pink-600 hover:bg-pink-500 text-white px-9 py-4.5 rounded-2xl font-bold text-xs tracking-wider uppercase transition-all shadow-xl shadow-pink-600/30 group/btn hover:scale-[1.05]"
-              >
-                Explore Property <ArrowRight size={16} className="group-hover/btn:translate-x-1.5 transition-transform" />
-              </Link>
-            </div>
+              <div className="pt-2">
+                <Link 
+                  to="/pink-park"
+                  className="inline-flex items-center gap-3 bg-white/5 hover:bg-pink-600 border border-white/10 hover:border-pink-500 text-white px-8 py-3.5 rounded-xl font-sans font-bold text-[9px] tracking-[0.2em] uppercase transition-all duration-500 hover:shadow-[0_0_30px_rgba(236,72,153,0.25)] pointer-events-auto hover:scale-[1.03]"
+                >
+                  Explore Property <ArrowRight size={13} />
+                </Link>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
 
-        {/* INDRA HOME STAY CARD */}
+        {/* PANEL 2: INDRA HOME STAY (RIGHT) */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
-          className="w-full lg:w-1/2 h-[55vh] lg:h-[65vh] group relative rounded-[3rem] overflow-hidden border border-white/10 bg-[#16130f]/60 shadow-[0_30px_100px_rgba(0,0,0,0.8)] hover:border-amber-500/40 transition-all duration-700 backdrop-blur-md"
+          onMouseEnter={() => {
+            if (!isMobile) {
+              setHoveredSide('right');
+              setCursorVariant('hover');
+              setCursorText('Explore');
+            }
+          }}
+          onMouseLeave={() => {
+            if (!isMobile) {
+              setHoveredSide(null);
+              setCursorVariant('default');
+              setCursorText('');
+            }
+          }}
+          animate={{
+            width: isMobile ? "100%" : hoveredSide === 'right' ? '60%' : hoveredSide === 'left' ? '40%' : '50%',
+            height: isMobile ? "50vh" : "100%"
+          }}
+          transition={{ type: "spring", stiffness: 180, damping: 24, mass: 0.8 }}
+          className="relative overflow-hidden group cursor-none"
         >
-          {/* Background Image */}
-          <div className="absolute inset-0 z-0 overflow-hidden">
-            <img 
-              src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80" 
-              alt="Indra Home Stay" 
-              className="w-full h-full object-cover opacity-40 group-hover:opacity-75 group-hover:scale-110 transition-all duration-[1.5s]"
-            />
-            {/* Rich gradient overlay for max contrast & readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0704] via-[#0a0704]/70 to-[#0a0704]/20" />
-          </div>
+          {/* Background Image with Cinematic Transitions & Ken Burns Effect */}
+          <motion.img 
+            src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80" 
+            alt="Indra Home Stay" 
+            animate={{
+              scale: hoveredSide === 'right' ? 1.08 : 1.02,
+              filter: hoveredSide === 'right' 
+                ? 'brightness(0.6) saturate(1.1)' 
+                : hoveredSide === 'left'
+                ? 'brightness(0.18) saturate(0.1) blur(3px)'
+                : 'brightness(0.38) saturate(0.65) sepia(0.15)'
+            }}
+            transition={{ duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
+            className="w-full h-full object-cover absolute inset-0 z-0 origin-center pointer-events-none"
+          />
+          {/* Premium Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10 z-10 pointer-events-none" />
 
-          {/* Card Content */}
-          <div className="absolute inset-0 z-10 p-10 md:p-14 flex flex-col justify-between h-full">
-            <div className="flex justify-between items-start">
-              <span className="bg-amber-600/20 text-amber-400 border border-amber-500/30 px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em]">
+          {/* Panel Card Content */}
+          <div className="absolute inset-0 z-20 p-8 md:p-14 lg:p-20 flex flex-col justify-end lg:justify-between h-full">
+            {/* Top Row: Tagline and Big Number */}
+            <div className="hidden lg:flex justify-between items-start w-full">
+              <span className="border border-amber-500/30 bg-amber-500/10 text-amber-300 px-5 py-2 rounded-full text-[9px] font-bold uppercase tracking-[0.25em] backdrop-blur-md">
                 Cozy & Traditional
               </span>
-              <span className="text-white/10 font-serif text-6xl font-black group-hover:text-amber-500/20 transition-all leading-none">02</span>
+              <motion.span 
+                animate={{ opacity: hoveredSide === 'right' ? 0.15 : hoveredSide === 'left' ? 0.02 : 0.08 }}
+                className="text-white font-serif text-8xl md:text-[10rem] font-bold tracking-tighter leading-none select-none"
+              >
+                02
+              </motion.span>
             </div>
 
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <span className="text-[10px] uppercase font-bold tracking-[0.3em] text-amber-400 block font-serif">Gunehar Village, Bir</span>
-                {/* Explicitly colored text-white h2 to override global stylesheet */}
-                <h2 className="text-white text-4xl md:text-5xl font-serif font-bold tracking-tight group-hover:text-amber-200 transition-colors drop-shadow-md">
+            {/* Bottom Content Area */}
+            <motion.div 
+              animate={{
+                y: hoveredSide === 'right' ? 0 : hoveredSide === 'left' ? 15 : 0,
+                opacity: hoveredSide === 'right' ? 1 : hoveredSide === 'left' ? 0.35 : 0.8
+              }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="space-y-4 md:space-y-6"
+            >
+              <div className="space-y-2 md:space-y-3">
+                {/* Mobile Tagline (when hidden in top row) */}
+                <span className="lg:hidden inline-block border border-amber-500/30 bg-amber-500/5 text-amber-300 px-4 py-1.5 rounded-full text-[8px] font-bold uppercase tracking-[0.2em] mb-2">
+                  Cozy & Traditional
+                </span>
+                <span className="text-[10px] uppercase font-bold tracking-[0.3em] text-[#C5A880] block font-serif">
+                  Gunehar Village, Bir
+                </span>
+                <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-serif font-semibold tracking-wide drop-shadow-md">
                   Indra Home Stay
                 </h2>
-                <p className="text-zinc-300 text-sm md:text-base font-light leading-relaxed max-w-md drop-shadow">
+                <p className="text-zinc-300/90 text-xs md:text-sm lg:text-base font-light leading-relaxed max-w-md drop-shadow">
                   Reconnect with nature in our traditional wooden cottages and attics. Enjoy organic farm breakfasts, bonfire stories, and peaceful riverside walks.
                 </p>
               </div>
 
-              <Link 
-                to="/indra-home-stay"
-                className="inline-flex items-center gap-3 bg-amber-600 hover:bg-amber-500 text-white px-9 py-4.5 rounded-2xl font-bold text-xs tracking-wider uppercase transition-all shadow-xl shadow-amber-600/30 group/btn hover:scale-[1.05]"
-              >
-                Explore Property <ArrowRight size={16} className="group-hover/btn:translate-x-1.5 transition-transform" />
-              </Link>
-            </div>
+              <div className="pt-2">
+                <Link 
+                  to="/indra-home-stay"
+                  className="inline-flex items-center gap-3 bg-white/5 hover:bg-amber-600 border border-white/10 hover:border-amber-500 text-white px-8 py-3.5 rounded-xl font-sans font-bold text-[9px] tracking-[0.2em] uppercase transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.25)] pointer-events-auto hover:scale-[1.03]"
+                >
+                  Explore Property <ArrowRight size={13} />
+                </Link>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
 
-      </main>
+      </div>
 
-      {/* Footer Info */}
-      <footer className="py-10 text-center relative z-20 border-t border-white/5 bg-black/40 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 tracking-wider">
-          <p>© {new Date().getFullYear()} Panache Hotels Luxury Franchise. All rights reserved.</p>
-          <div className="flex gap-6">
-            <span className="flex items-center gap-1.5"><Compass size={12} className="text-amber-500" /> Bir Billing, Himachal Pradesh</span>
-            <span className="flex items-center gap-1.5 flex-row-reverse"><GoldSparkle className="w-3.5 h-3.5" /> Two Premium Properties</span>
+      {/* Floating Footer Branding */}
+      <footer className="absolute bottom-6 left-0 right-0 z-30 px-10 pointer-events-none hidden md:block">
+        <div className="max-w-9xl mx-auto flex justify-between items-center w-full">
+          <p className="text-[9px] text-white/30 tracking-[0.2em] font-sans">
+            © {new Date().getFullYear()} Panache Hotels Luxury Franchise. All rights reserved.
+          </p>
+          <div className="flex gap-8 text-[9px] text-white/40 tracking-[0.25em] font-sans">
+            <span className="flex items-center gap-2">
+              <Compass size={12} className="text-[#C5A880]" /> Bir Billing, HP
+            </span>
+            <span className="w-1 h-1 rounded-full bg-[#C5A880] self-center" />
+            <span className="flex items-center gap-2">
+              Two Premium Properties
+            </span>
           </div>
         </div>
       </footer>
+
     </div>
   );
 };

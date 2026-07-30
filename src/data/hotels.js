@@ -1,10 +1,10 @@
 export const hotelsData = {
-  "piink-park": {
-    id: "piink-park",
-    name: "Piink Park",
+  "pink-park": {
+    id: "pink-park",
+    name: "Pink Park",
     tagline: "Refined Living",
     subName: "By Panache Hotels",
-    logoText: "Piink Park",
+    logoText: "Pink Park",
     themeColor: "pink",
     borderTheme: "border-pink-500/20",
     bgTheme: "bg-pink-600",

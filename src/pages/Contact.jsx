@@ -5,8 +5,8 @@ import { hotelsData } from '../data/hotels';
 
 const Contact = () => {
   const { hotelId } = useParams();
-  const currentId = hotelId || "piink-park";
-  const hotel = hotelsData[currentId] || hotelsData["piink-park"];
+  const currentId = hotelId || "pink-park";
+  const hotel = hotelsData[currentId] || hotelsData["pink-park"];
   const isPink = hotel.themeColor === 'pink';
 
   // Dynamic Theme Colors
@@ -60,7 +60,7 @@ const Contact = () => {
             <div className="space-y-6">
               <h2 className="text-4xl font-serif text-slate-900 leading-tight">We're here to help you find your <span className={`italic ${textAccentHeavy}`}>Zen</span>.</h2>
               <p className="text-slate-600 text-lg font-light leading-relaxed">
-                {currentId === "piink-park"
+                {currentId === "pink-park"
                   ? "Whether you're planning a paragliding adventure or seeking a peaceful Himalayan retreat, our team is ready to assist with every detail of your stay."
                   : "If you seek quiet village environment, home-cooked food, riverside walks, or just a cozy break in the mountains, we welcome you to our home."
                 }

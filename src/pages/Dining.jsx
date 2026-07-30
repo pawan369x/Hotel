@@ -6,8 +6,8 @@ import { hotelsData } from '../data/hotels';
 
 const Dining = () => {
   const { hotelId } = useParams();
-  const currentId = hotelId || "piink-park";
-  const hotel = hotelsData[currentId] || hotelsData["piink-park"];
+  const currentId = hotelId || "pink-park";
+  const hotel = hotelsData[currentId] || hotelsData["pink-park"];
   const isPink = hotel.themeColor === 'pink';
 
   // Dynamic Theme Colors
@@ -53,7 +53,7 @@ const Dining = () => {
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <h2 className="text-4xl font-serif">A Feast for the <span className={`italic ${textAccentSuperHeavy}`}>Senses</span></h2>
           <p className="text-lg text-slate-600 leading-relaxed font-light">
-            {currentId === "piink-park" 
+            {currentId === "pink-park" 
               ? "Our kitchen uses only the freshest ingredients sourced from local Bir farms. From traditional Himachali Dham to international favorites, every dish is prepared with passion and served with warmth."
               : "Our home kitchen uses only organic fresh ingredients harvested directly from our Gunehar orchards and local homestay farms. Every traditional pahadi recipe is prepared with love and organic spices."
             }

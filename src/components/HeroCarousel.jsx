@@ -6,8 +6,8 @@ import { hotelsData } from '../data/hotels';
 
 const HeroCarousel = () => {
   const { hotelId } = useParams();
-  const currentId = hotelId || "piink-park";
-  const hotel = hotelsData[currentId] || hotelsData["piink-park"];
+  const currentId = hotelId || "pink-park";
+  const hotel = hotelsData[currentId] || hotelsData["pink-park"];
   const isPink = hotel.themeColor === 'pink';
 
   // Dynamic Theme Colors
@@ -21,7 +21,7 @@ const HeroCarousel = () => {
     id: idx + 1,
     title: img.title,
     subtitle: img.tag.toUpperCase(),
-    description: currentId === "piink-park"
+    description: currentId === "pink-park"
       ? "Modern luxury meets adventure in the heart of the Himalayas."
       : "Authentic hospitality, organic dining, and absolute peace in Gunehar.",
     image: img.url

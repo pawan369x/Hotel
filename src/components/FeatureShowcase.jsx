@@ -6,15 +6,15 @@ import { hotelsData } from '../data/hotels';
 
 const FeatureShowcase = () => {
   const { hotelId } = useParams();
-  const currentId = hotelId || "piink-park";
-  const hotel = hotelsData[currentId] || hotelsData["piink-park"];
+  const currentId = hotelId || "pink-park";
+  const hotel = hotelsData[currentId] || hotelsData["pink-park"];
   const isPink = hotel.themeColor === 'pink';
 
   const textAccent = isPink ? 'text-pink-500' : 'text-amber-500';
   const iconAccent = isPink ? 'text-pink-600' : 'text-amber-600';
   const bgLineAccent = isPink ? 'bg-pink-200 group-hover:bg-pink-500' : 'bg-amber-200 group-hover:bg-amber-500';
 
-  const features = currentId === 'piink-park' ? [
+  const features = currentId === 'pink-park' ? [
     {
       id: 1,
       icon: <FiCoffee size={24} />,
@@ -163,10 +163,10 @@ const FeatureShowcase = () => {
           </div>
           <div>
             <h5 className="text-4xl font-black text-gray-900 tracking-tighter">
-              {currentId === "piink-park" ? "15+" : "8+"}
+              {currentId === "pink-park" ? "15+" : "8+"}
             </h5>
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">
-              {currentId === "piink-park" ? "Luxury Suites" : "Cozy Rooms"}
+              {currentId === "pink-park" ? "Luxury Suites" : "Cozy Rooms"}
             </p>
           </div>
         </motion.div>

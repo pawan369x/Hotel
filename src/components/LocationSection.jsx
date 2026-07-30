@@ -6,8 +6,8 @@ import { hotelsData } from '../data/hotels';
 
 const LocationSection = () => {
   const { hotelId } = useParams();
-  const currentId = hotelId || "piink-park";
-  const hotel = hotelsData[currentId] || hotelsData["piink-park"];
+  const currentId = hotelId || "pink-park";
+  const hotel = hotelsData[currentId] || hotelsData["pink-park"];
   const isPink = hotel.themeColor === 'pink';
 
   // Dynamic Theme Styling
@@ -54,8 +54,8 @@ const LocationSection = () => {
                 At the <span className={`${textAccent} italic`}>Heart</span> of Bir.
               </motion.h2>
               <p className="text-slate-500 text-lg mt-6 leading-relaxed font-light">
-                {currentId === "piink-park"
-                  ? "Hotel Piink Park is strategically located in Kotli, Bir. Whether you are here for paragliding or seeking spiritual peace in monasteries, everything is just a stone's throw away."
+                {currentId === "pink-park"
+                  ? "Hotel Pink Park is strategically located in Kotli, Bir. Whether you are here for paragliding or seeking spiritual peace in monasteries, everything is just a stone's throw away."
                   : "Indra Home Stay is nestled in the serene village of Gunehar, Bir. Experience the calm mountain environment, adjacent to cascading waterfalls and lush tea garden trails, while still being easily connected to the paragliding landing site."
                 }
               </p>

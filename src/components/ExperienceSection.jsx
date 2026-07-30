@@ -6,8 +6,8 @@ import { hotelsData } from '../data/hotels';
 
 const ExperienceSection = () => {
     const { hotelId } = useParams();
-    const currentId = hotelId || "piink-park";
-    const hotel = hotelsData[currentId] || hotelsData["piink-park"];
+    const currentId = hotelId || "pink-park";
+    const hotel = hotelsData[currentId] || hotelsData["pink-park"];
     const isPink = hotel.themeColor === 'pink';
 
     const sectionRef = useRef(null);
@@ -74,7 +74,7 @@ const ExperienceSection = () => {
                 className="absolute top-0 right-0 text-[30vw] font-black text-slate-100 whitespace-nowrap pointer-events-none select-none z-0"
                 style={{ y: useTransform(scrollYProgress, [0, 1], [-100, 100]) }}
             >
-                {currentId === "piink-park" ? "BIR BILLING" : "GUNEHAR"}
+                {currentId === "pink-park" ? "BIR BILLING" : "GUNEHAR"}
             </motion.h2>
 
             <motion.div
@@ -100,8 +100,8 @@ const ExperienceSection = () => {
                                 A <span className={`${textAccent} italic`}>Symphony</span> of <motion.span style={{x: textTrack}} className="inline-block">Luxury</motion.span> & Nature.
                             </motion.h2>
                             <motion.p variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="text-lg text-slate-600 leading-relaxed font-light">
-                                {currentId === "piink-park"
-                                  ? "Nestled in Kotli, Bir, Hotel Piink Park offers an unparalleled 3-star retreat, perfectly blending modern elegance and Himachali warmth."
+                                {currentId === "pink-park"
+                                  ? "Nestled in Kotli, Bir, Hotel Pink Park offers an unparalleled 3-star retreat, perfectly blending modern elegance and Himachali warmth."
                                   : "Located in the quiet village of Gunehar, Bir, Indra Home Stay offers a tranquil slice of local village life, blending cozy traditional cottages and warm pahadi hospitality."
                                 }
                             </motion.p>
@@ -118,20 +118,20 @@ const ExperienceSection = () => {
                             <motion.div variants={itemVariants} className={`bg-slate-50 border border-slate-100 p-8 rounded-3xl transition-colors cursor-pointer space-y-3 group ${borderAccent}`}>
                                 <Heart className={`${textAccent} group-hover:scale-125 transition-transform`} />
                                 <h3 className="text-xl font-bold">
-                                  {currentId === "piink-park" ? "Premium Suites" : "Cozy Attics"}
+                                  {currentId === "pink-park" ? "Premium Suites" : "Cozy Attics"}
                                 </h3>
                                 <p className="text-sm text-slate-500">
-                                  {currentId === "piink-park" ? "Unmatched comfort in the hills." : "Traditional mud & timber comfort."}
+                                  {currentId === "pink-park" ? "Unmatched comfort in the hills." : "Traditional mud & timber comfort."}
                                 </p>
                             </motion.div>
                             
                             <motion.div variants={itemVariants} className={`border p-8 rounded-3xl transition-colors cursor-pointer space-y-3 group ${bgAccentLight} ${borderAccentStrong}`}>
                                 <MapPin className={`${textAccent} group-hover:scale-125 transition-transform`} />
                                 <h3 className="text-xl font-bold">
-                                  {currentId === "piink-park" ? "Prime Location" : "Peaceful Oasis"}
+                                  {currentId === "pink-park" ? "Prime Location" : "Peaceful Oasis"}
                                 </h3>
                                 <p className="text-sm text-slate-500">
-                                  {currentId === "piink-park" 
+                                  {currentId === "pink-park" 
                                     ? "Near Paragliding landing site." 
                                     : "Near waterfalls & tea gardens."}
                                 </p>
@@ -147,7 +147,7 @@ const ExperienceSection = () => {
                         >
                              <div className="absolute inset-2 bg-white rounded-[2rem] overflow-hidden">
                                 <img 
-                                    src={currentId === "piink-park" ? "/banner-1.png" : "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80"} 
+                                    src={currentId === "pink-park" ? "/banner-1.png" : "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80"} 
                                     alt={hotel.name} 
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />

@@ -6,8 +6,8 @@ import { hotelsData } from '../data/hotels';
 
 const About = () => {
   const { hotelId } = useParams();
-  const currentId = hotelId || "piink-park";
-  const hotel = hotelsData[currentId] || hotelsData["piink-park"];
+  const currentId = hotelId || "pink-park";
+  const hotel = hotelsData[currentId] || hotelsData["pink-park"];
   const isPink = hotel.themeColor === 'pink';
 
   const containerRef = useRef(null);
@@ -26,7 +26,7 @@ const About = () => {
   const bgAccent = isPink ? 'bg-slate-900 hover:bg-pink-600' : 'bg-slate-900 hover:bg-amber-600';
   const shadowAccent = isPink ? 'shadow-pink-500/10' : 'shadow-amber-500/10';
 
-  const values = currentId === 'piink-park' ? [
+  const values = currentId === 'pink-park' ? [
     { icon: <Mountain size={32} />, title: "Nature First", desc: "Every window frames a masterpiece of the Himalayan landscape." },
     { icon: <Heart size={32} />, title: "Local Soul", desc: "Authentic Himachali hospitality delivered with a modern touch." },
     { icon: <Compass size={32} />, title: "Adventure", desc: "Located at the heartbeat of paragliding and trekking trails." }
@@ -84,14 +84,14 @@ const About = () => {
           <div className="relative">
             <motion.div style={{ y: y2 }} className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl">
               <img 
-                src={currentId === "piink-park" ? "/banner-2.png" : "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80"} 
+                src={currentId === "pink-park" ? "/banner-2.png" : "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80"} 
                 alt="Bir View" 
                 className="w-full h-full object-cover" 
               />
             </motion.div>
             <div className="absolute -bottom-12 -left-12 bg-slate-900 p-10 rounded-[2.5rem] text-white shadow-2xl hidden md:block">
               <p className={`text-5xl font-black ${textAccent} mb-2`}>
-                {currentId === "piink-park" ? "3-Star" : "Boutique"}
+                {currentId === "pink-park" ? "3-Star" : "Boutique"}
               </p>
               <p className="text-xs uppercase tracking-widest font-bold opacity-60">Property by Panache</p>
             </div>

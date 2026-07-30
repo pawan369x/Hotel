@@ -6,8 +6,8 @@ import { hotelsData } from '../data/hotels';
 
 const DiningSection = () => {
   const { hotelId } = useParams();
-  const currentId = hotelId || "piink-park";
-  const hotel = hotelsData[currentId] || hotelsData["piink-park"];
+  const currentId = hotelId || "pink-park";
+  const hotel = hotelsData[currentId] || hotelsData["pink-park"];
   const isPink = hotel.themeColor === 'pink';
 
   const categories = hotel.diningCategories;
@@ -116,14 +116,14 @@ const DiningSection = () => {
                  <div className="space-y-6">
                     <Utensils className={textAccentHeavy} size={48} />
                     <h3 className="text-4xl lg:text-5xl font-serif leading-tight">
-                      {currentId === "piink-park" ? (
+                      {currentId === "pink-park" ? (
                         <>Private <span className={`italic ${textAccent}`}>Starlit</span> <br /> Rooftop Dinners</>
                       ) : (
                         <>Traditional <span className={`italic ${textAccent}`}>Pahadi</span> <br /> Bonfire Cookout</>
                       )}
                     </h3>
                     <p className="text-white/50 text-lg max-w-md">
-                      {currentId === "piink-park" 
+                      {currentId === "pink-park" 
                         ? "Experience the magic of Bir under the stars. A curated multi-course menu served in absolute privacy."
                         : "Gather around the fire with fresh organic skewers and custom spices prepared by local cooks."
                       }</p>
@@ -149,7 +149,7 @@ const DiningSection = () => {
                   </div>
                   <h4 className="text-2xl font-bold">100% Organic</h4>
                   <p className="text-white/80 text-sm">
-                    {currentId === "piink-park" 
+                    {currentId === "pink-park" 
                       ? "Locally sourced from Bir's mountain farms."
                       : "Fresh ingredients from Gunehar orchard gardens."}
                   </p>
@@ -157,7 +157,7 @@ const DiningSection = () => {
               <div className="flex-1 bg-white/5 border border-white/10 rounded-[3rem] p-10 flex flex-col justify-center items-center text-center space-y-4">
                   <Coffee size={40} className={textAccent} />
                   <h4 className="text-2xl font-bold italic font-serif">
-                    {currentId === "piink-park" ? "Sunset Cafe" : "Orchard Cafe"}
+                    {currentId === "pink-park" ? "Sunset Cafe" : "Orchard Cafe"}
                   </h4>
                   <span className="text-[10px] font-serif font-bold tracking-[0.3em] uppercase text-white/30">Open till 10 PM</span>
               </div>

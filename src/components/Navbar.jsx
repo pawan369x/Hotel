@@ -13,8 +13,8 @@ const Navbar = () => {
   const { hotelId } = useParams();
   
   // Resolve current hotel data
-  const currentId = hotelId || "piink-park";
-  const hotel = hotelsData[currentId] || hotelsData["piink-park"];
+  const currentId = hotelId || "pink-park";
+  const hotel = hotelsData[currentId] || hotelsData["pink-park"];
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -129,7 +129,7 @@ const Navbar = () => {
                         >
                           <div className="text-left">
                             <p className="text-xs text-slate-800 font-medium">{prop.name}</p>
-                            <p className="text-[9px] text-gray-400 font-light">{prop.id === 'piink-park' ? 'Bir Billing, Luxury' : 'Gunehar Village, Cozy'}</p>
+                            <p className="text-[9px] text-gray-400 font-light">{prop.id === 'pink-park' ? 'Bir Billing, Luxury' : 'Gunehar Village, Cozy'}</p>
                           </div>
                           <span className={`w-2.5 h-2.5 rounded-full ${prop.themeColor === 'pink' ? 'bg-pink-600' : 'bg-amber-600'}`} />
                         </Link>
@@ -254,7 +254,7 @@ const Navbar = () => {
             <div className="p-10 text-center border-t border-gray-50">
               <p className="text-gray-400 text-[10px] font-sans tracking-[0.4em] uppercase mb-3">Panache Hotels Experience</p>
               <div className="flex justify-center gap-6 text-xs text-gray-500 uppercase tracking-widest font-light">
-                <span>{hotel.id === 'piink-park' ? 'Bir Billing, HP' : 'Gunehar Valley, HP'}</span>
+                <span>{hotel.id === 'pink-park' ? 'Bir Billing, HP' : 'Gunehar Valley, HP'}</span>
               </div>
             </div>
           </motion.div>
